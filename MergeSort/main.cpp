@@ -6,10 +6,11 @@
 template<class T>
 std::vector<T> Merge(const std::vector<T> &left, const std::vector<T> &right) {
   std::vector<T> merged_array;
-  int i, j = 0;
+  int i = 0;
+  int j = 0;
 
   while (i + j < left.size() + right.size()) {
-    if ((j >= right.size() && i < left.size()) ||
+    if ((j >= right.size()) ||
 	(i < left.size() && j < right.size() && left[i] <= right[j]))
       merged_array.push_back(left[i++]);
     else
