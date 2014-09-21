@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <vector>
 
 constexpr char kBase[] = "0123456789";
 
@@ -15,12 +16,12 @@ constexpr int kTestArray[][2] = {
 
 constexpr int kTestArraySize = sizeof(kTestArray) / sizeof(*kTestArray);
 
-// Computes the multiplication between the two number traited as strings
-// passed in parameter.
-std::string Karatsuba(std::string const &number1, std::string const &number2) {
-  return std::string("0");
+int PositionInBase(char digit) {
+  return std::find(kBase, kBase + kBaseSize, digit) - kBase;
 }
 
+// Computes the addition  between the two number traited as strings
+// passed in parameter.
 std::string Add(std::string const &number1, std::string const &number2) {
   std::string result;
 
@@ -39,12 +40,15 @@ std::string Add(std::string const &number1, std::string const &number2) {
   for (auto digit_in_longest_number = longest_number.rbegin();
        digit_in_longest_number != longest_number.rend();
        ++digit_in_longest_number) {
-    int digit1_position_in_base = std::find(kBase, kBase + kBaseSize,
-					   *digit_in_longest_number) - kBase;
+    int digit1_position_in_base = PositionInBase(*digit_in_longest_number);
+
+    // Initialize to 0 so that if all the digits of the number are consumed
+    // then this digit won't have any influence (adding 0 to a number does not
+    // change the number).
     int digit2_position_in_base = 0;
+
     if (digit_in_shortest_number != shortest_number.rend()) {
-      digit2_position_in_base =  std::find(kBase, kBase + kBaseSize,
-					  *digit_in_shortest_number) - kBase;
+      digit2_position_in_base =  PositionInBase(*digit_in_longest_number);
       ++digit_in_shortest_number;
     }
     const char digit_addition_result =
@@ -55,6 +59,42 @@ std::string Add(std::string const &number1, std::string const &number2) {
     result.insert(result.begin(), digit_addition_result);
   }
   return result;
+}
+
+// Basic multiplication algorithm taught in school.
+std::string Multiplication(std::string const &number1,
+			   std::string const &number2) {
+  std::vector<std::string> intermediate_results;
+
+  for (auto digit_in_number2 = number2.rbegin();
+       digit_in_number2 != number2.rend(); ++digit_in_number2) {
+    int offset = 0;
+    int digit_in_number2_pos = PositionInBase(*digit_in_number2);
+
+    for (auto digit_in_number1 = number1.rbegin();
+	 digit_in_number1 != number1.rend(); ++digit_in_number1, ++offset) {
+      int digit_in_number1_pos = PositionInBase(*digit_in_number1);
+      int result = digit_in_number1_pos * digit_in_number2_pos;
+      std::string result_in_string('0', offset);
+
+      result_in_string.insert(result_in_string.begin(),
+			      kBase[digit_in_number1_pos % kBaseSize]);
+      if (result > kBaseSize)
+	result_in_string.insert(result_in_string.begin(),
+				kBase[digit_in_number2_pos / kBaseSize]);
+      intermediate_results.push_back(result_in_string);
+    }
+  }
+  std::string result = "0";
+  for (int i = 0; i < intermediate_results.size(); ++i)
+    result = Add(result, intermediate_results[i]);
+  return result;
+}
+
+// Computes the multiplication between the two number traited as strings
+// passed in parameter.
+std::string Karatsuba(std::string const &number1, std::string const &number2) {
+  return std::string("0");
 }
 
 bool Testkaratsuba() {
