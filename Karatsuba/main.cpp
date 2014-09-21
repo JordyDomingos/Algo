@@ -85,7 +85,7 @@ std::string Multiplication(std::string const &number1,
       intermediate_results.push_back(result_in_string);
     }
   }
-  std::string result = "0";
+  std::string result;
   for (int i = 0; i < intermediate_results.size(); ++i)
     result = Add(result, intermediate_results[i]);
   return result;
