@@ -75,7 +75,7 @@ std::string Multiplication(std::string const &number1,
 	 digit_in_number1 != number1.rend(); ++digit_in_number1, ++offset) {
       int digit_in_number1_pos = PositionInBase(*digit_in_number1);
       int result = digit_in_number1_pos * digit_in_number2_pos;
-      std::string result_in_string('0', offset);
+      std::string result_in_string(kBase[0], offset);
 
       result_in_string.insert(result_in_string.begin(),
 			      kBase[digit_in_number1_pos % kBaseSize]);
