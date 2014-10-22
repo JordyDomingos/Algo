@@ -131,6 +131,7 @@ std::string Karatsuba(std::string const &number1, std::string const &number2) {
   
   std::string result_ab_cd = Karatsuba(result_add_ab, result_add_cd);
 
+  // Gauss Trick.
   std::string sub_result = Sub(Sub(result_ab_cd, result_bd), result_ac);
 
   result_ac += "0000";
